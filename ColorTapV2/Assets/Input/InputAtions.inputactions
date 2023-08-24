@@ -1,0 +1,34 @@
+{
+    "name": "InputAtions",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "74297a23-f187-4682-aad8-ae07de518a59",
+            "actions": [
+                {
+                    "name": "SkipAnimation",
+                    "type": "Button",
+                    "id": "95eea182-7316-40c9-8411-5d9650e9fec9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "53f0c148-75f0-4256-a31d-07cc47792ed1",
+                    "path": "<Touchscreen>/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SkipAnimation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
