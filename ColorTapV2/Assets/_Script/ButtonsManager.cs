@@ -93,18 +93,18 @@ public class ButtonsManager : MonoBehaviour
         }
     }
 
-    public void ChangeTransparencyAButtons(PlayerID playerID, int colorIDButton, float transparenci, bool isPlaySoundButton)
+    public void ChangeTransparencyAButtons(PlayerID playerID, int IndexButton, float transparenci, bool isPlaySoundButton)
     {
         
         switch (playerID)
         {
             case PlayerID.Player1:
-                player1Buttons[colorIDButton].ChangeTransparency(transparenci);
-                if (isPlaySoundButton) player1Buttons[colorIDButton].PlaySoundPress();
+                player1Buttons[IndexButton].ChangeTransparency(transparenci);
+                if (isPlaySoundButton) player1Buttons[IndexButton].PlaySoundPress();
                 break;
             case PlayerID.Player2:
-                player2Buttons[colorIDButton].ChangeTransparency(transparenci);
-                if (isPlaySoundButton) player2Buttons[colorIDButton].PlaySoundPress();
+                player2Buttons[IndexButton].ChangeTransparency(transparenci);
+                if (isPlaySoundButton) player2Buttons[IndexButton].PlaySoundPress();
                 break;
         }
     }

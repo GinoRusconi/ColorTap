@@ -21,8 +21,6 @@ public class UiManagement : MonoBehaviour
         animator = GOTextPlayerWin.GetComponent<Animator>();
         PlayerWinGUI = GOTextPlayerWin.GetComponent<TextMeshProUGUI>();
         RectTransformTextPlayerWin = GOTextPlayerWin.GetComponent<RectTransform>();
-
-
     }
 
     public void UpdateScore(PlayerID playerID)
@@ -41,12 +39,11 @@ public class UiManagement : MonoBehaviour
                 StartCoroutine(DeformScore(scorePlayer2));
                 break;
         }
-
     }
 
     public IEnumerator DeformScore(TMP_Text tmpText)
     {
-        float duration = 0.2f; // Duración en segundos
+        float duration = 0.2f; // Duraciï¿½n en segundos
         float elapsedTime = 0f;
 
         float startFontSize = tmpText.fontSize;
@@ -62,7 +59,7 @@ public class UiManagement : MonoBehaviour
             yield return null;
         }
 
-        // Asegurarse de que la fuente tenga el tamaño final
+        // Asegurarse de que la fuente tenga el tamaï¿½o final
         tmpText.fontSize = startFontSize;
     }
 
@@ -99,10 +96,10 @@ public class UiManagement : MonoBehaviour
 
         
 
-        // Activar la animación
-        animator.SetTrigger(HashShowPlayerWin); // Inicia la animación
+        // Activar la animaciï¿½n
+        animator.SetTrigger(HashShowPlayerWin); // Inicia la animaciï¿½n
 
-        yield return null; // Espera hasta la siguiente actualización del frame
+        yield return null; // Espera hasta la siguiente actualizaciï¿½n del frame
 
         bool isThatAnimation = true;
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -116,7 +113,7 @@ public class UiManagement : MonoBehaviour
         {
             stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             isThatAnimation = stateInfo.IsName("MoveInfoPlayer");
-            yield return null; // Espera hasta la siguiente actualización del frame
+            yield return null; // Espera hasta la siguiente actualizaciï¿½n del frame
         }
 
     }
@@ -140,15 +137,9 @@ public class UiManagement : MonoBehaviour
         scorePlayer2.text = $"{player2}";
     }
 
-    public IEnumerator FinishMatch(PlayerID playerWin)
+    public void ResetDefault()
     {
-        string player = playerWin.ToString();
-        Debug.Log($"win {player}");
-
-        yield return new WaitForSeconds(1f);
-
-        ForcedUpdateUI(0, 0);
         scoreP1 = 0;
-        scoreP2 = 0;
+        scoreP2 = 0;    
     }
 }

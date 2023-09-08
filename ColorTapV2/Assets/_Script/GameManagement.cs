@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections;
-using System.Collections.Generic;
 using System;
 
 public class GameManagement : MonoBehaviour
@@ -79,13 +77,13 @@ public class GameManagement : MonoBehaviour
             gameMode.IGameMode(this, _MixColor);
             gameMode.NewRound();
         }
-
     }
 
     public IEnumerator FinishMatch(PlayerID playerID)
     {
-        yield return StartCoroutine(_UiManagement.FinishMatch(playerID));
+        _UiManagement.ResetDefault();
         yield return StartCoroutine(_UiManagement.TextPlayer(playerID,"win"));
+        _UiManagement.DesactivatedScore();
         menuMod.SetActive(true);
         _ButtonsManager.ResetDefaultButtons();
         
