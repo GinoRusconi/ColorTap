@@ -7,9 +7,13 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public GameManagement gameManagement { get; set; }
     public MixColor mixColor { get; set; }
 
+    public string textTutorial;
+
     private List<int> MemoryColorsID;
     private int countColorPress;
     private PlayerID playerTurn;
+
+
     public void IGameMode(GameManagement gameManagement, MixColor mixColor)
     {
         MemoryColorsID = new List<int>();
@@ -17,11 +21,12 @@ public class MemoryMode : MonoBehaviour, IGameMode
         this.mixColor = mixColor;
         playerTurn = PlayerID.Player1;
     }
+
     public void NewRound()
     {
         countColorPress = -1;
         MemoryColorsID.Clear();
-        gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(false);
+        
         StartCoroutine(FirstTurn());
     }
 
@@ -45,6 +50,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
         }
 
     }
+
     public void CheckConditionWin(ButtonController buttonController)
     {
         countColorPress++;
@@ -72,6 +78,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
             }
         }
     }
+
     public IEnumerator PlayerWinRound(PlayerID playerID)
     {
         gameManagement._ButtonsManager.ActivateORDeactivateButtonInteraction(playerID, false);
@@ -93,6 +100,10 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public IEnumerator FirstTurn()
     {
         Debug.Log($"Start Game");
+        yield return gameManagement.ShowTutorial(textTutorial);
+        gameManagement.animatorPlayer1.SetTrigger("StartGame");
+        gameManagement.animatorPlayer2.SetTrigger("StartGame");
+        gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(false);
         yield return new WaitForSeconds(2f);
         AddColorIDToList();
     }
@@ -100,12 +111,13 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public IEnumerator ShowButtonsOrder()
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(playerTurn, "Your Turn"));
-        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(140);
+        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(100);
         foreach (var button in MemoryColorsID)
         {
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 255, true);
+            mixColor.ChangeColorMainCamera(button); 
             yield return new WaitForSecondsRealtime(0.5f);
-            gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 140, false);
+            gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 100, false);
             yield return new WaitForSecondsRealtime(0.3f);
         }
 

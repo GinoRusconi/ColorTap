@@ -6,6 +6,8 @@ public class VelocityMode : MonoBehaviour, IGameMode
 {
     public GameManagement gameManagement { get; set; }
     public MixColor mixColor { get; set; }
+    public string textTutorial;
+    public bool isShowingTutorial = false;
     private int RandomColorSelect;
 
     private int scoreP1;
@@ -24,6 +26,12 @@ public class VelocityMode : MonoBehaviour, IGameMode
 
     public IEnumerator PlayRound()
     {
+
+        if(isShowingTutorial == false){
+            yield return gameManagement.ShowTutorial(textTutorial);  
+            isShowingTutorial = true;
+        } 
+
         yield return StartCoroutine(mixColor.Mixed());
         RandomColorSelect = mixColor.randomColorID;
 
@@ -110,6 +118,7 @@ public class VelocityMode : MonoBehaviour, IGameMode
     }
     public void PlayerWinGame(PlayerID playerID)
     {
+        isShowingTutorial = false;
         StartCoroutine(gameManagement.FinishMatch(playerID));
         scoreP1 = 0;
         scoreP2 = 0;

@@ -43,10 +43,9 @@ public class MixColor : MonoBehaviour
             } while (lastColor == randomColorID);
 
             lastColor = randomColorID;
-
-            mainCamera.backgroundColor = colors[randomColorID];
+            ChangeColorMainCamera(randomColorID);
             timeDelay *= timeBetweenDelay;
-            
+
             if (timeDelay >= maxTime)
             {
                 _AudioSource.clip = audioClips[1];
@@ -59,6 +58,12 @@ public class MixColor : MonoBehaviour
                
         Debug.Log("Finish");
     }
+
+    public void ChangeColorMainCamera(int idColor)
+    {
+        mainCamera.backgroundColor = colors[idColor];
+    }
+
 
     public int GetRandomColor()
     {

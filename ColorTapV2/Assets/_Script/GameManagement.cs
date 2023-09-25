@@ -23,15 +23,28 @@ public class GameManagement : MonoBehaviour
         _MixColor = FindObjectOfType<MixColor>();
         _ButtonsManager = FindObjectOfType<ButtonsManager>();
         _UiManagement = FindObjectOfType<UiManagement>();
+        _AudioSource = GetComponent<AudioSource>();
     }
     #endregion Singleton
     public MemoryMode memoryMod;
     public VelocityMode velocityMod;
     public IGameMode gameMode;
-    
+    public Camera _mainCamera;
+    public ParticleSystem _particleSystemMenu;
+    public ParticleSystem _particleSystemWin;
+    private float topEdgeY;
+    private float bottomEdgeY;
+
+    public int currentColorIndex = 0;
+    public int targetIndexColor = 1;
+    public float targetPoint;
+    private float timeDelayColor = 2;
+
     public Action WinPlayerRound;
     public Action ResetRound;
    
+    public AudioClip mainMenuAudio;
+    private AudioSource _AudioSource;
 
     [HideInInspector]public ButtonsManager _ButtonsManager;
 
@@ -39,21 +52,59 @@ public class GameManagement : MonoBehaviour
     private int countMatchPlaying = 0;
     private readonly int matchsToShowAds = 1;
     public GameObject menuMod;
+    private bool _EnableMenu = true;
 
-    
+    public Animator animatorPlayer1;
+    public Animator animatorPlayer2;
 
     public TextMeshProUGUI textPlayerWin;
 
     public Sprite winSprite;
     public Sprite loseSprite;
 
+    public TextMeshProUGUI tmpTutorial;
+
 
     [HideInInspector] public MixColor _MixColor;
 
     public InterstitialAdExample interstitialAdExample;
     
+    private void Start() {
+      
+        
+
+        
+        // Obtén las dimensiones de la pantalla
+        float screenHeight = Screen.height;
+        float screenWidth = Screen.width;
+
+        // Calcula la posición del borde superior e inferior a la mitad de la pantalla
+        topEdgeY = screenHeight * 0.5f;
+        bottomEdgeY = -screenHeight * 0.5f;    
+    }
+
+    private void Update() {
+
+        if(_EnableMenu){
+
+            targetPoint += Time.deltaTime / timeDelayColor;
+            _mainCamera.backgroundColor = Color.Lerp(_MixColor.colors[currentColorIndex],_MixColor.colors[targetIndexColor],targetPoint);
+
+            if(targetPoint >= 1f){
+                targetPoint = 0f;
+
+                currentColorIndex = targetIndexColor;
+                targetIndexColor++;
+                if(targetIndexColor == _MixColor.colors.Length){
+                    targetIndexColor = 0;
+                }
+            }
+        }
+    }
+
     public void SetGameMode(int gameMode)
     {
+        _AudioSource.Stop();
         switch (gameMode)
         {
             case 1: PlayGame(velocityMod); break;
@@ -72,7 +123,9 @@ public class GameManagement : MonoBehaviour
         } else
         {
             menuMod.SetActive(false);
-            countMatchPlaying++;
+            _EnableMenu = false;
+            _particleSystemMenu.Stop();
+            //countMatchPlaying++;
             this.gameMode = gameMode;
             gameMode.IGameMode(this, _MixColor);
             gameMode.NewRound();
@@ -82,12 +135,52 @@ public class GameManagement : MonoBehaviour
     public IEnumerator FinishMatch(PlayerID playerID)
     {
         _UiManagement.ResetDefault();
+        
+        // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
+        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0.5f, _mainCamera.nearClipPlane));
+        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, _mainCamera.nearClipPlane));
+
+        switch (playerID)
+        {
+            case PlayerID.Player1:
+                _particleSystemWin.gameObject.transform.position = leftEdge;
+                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0,0,180);
+                break;
+            case PlayerID.Player2:
+                _particleSystemWin.gameObject.transform.position = rightEdge;
+                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0,0,0);
+                break;
+        }
+
+        _particleSystemWin.gameObject.SetActive(true);
         yield return StartCoroutine(_UiManagement.TextPlayer(playerID,"win"));
+        while(_particleSystemWin.gameObject.activeSelf)
+        {
+            yield return null;
+        }
+        
         _UiManagement.DesactivatedScore();
+        _AudioSource.Play();
         menuMod.SetActive(true);
+        _EnableMenu = true;
+        _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
         
         interstitialAdExample.LoadAd();
         yield return new WaitForFixedUpdate();
+    }
+
+    public IEnumerator ShowTutorial(String Text){
+
+        tmpTutorial.gameObject.SetActive(true);
+        tmpTutorial.text = Text;
+        yield return null; 
+        while (Input.touchCount == 0)
+        {
+            yield return null;   
+        }
+
+        tmpTutorial.text = " ";
+        tmpTutorial.gameObject.SetActive(false);
     }
 }

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: d67a3273b79e58246b44936e7a212898
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Mini Home
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 820e52e4f93460e40abd674e70243d62, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
