@@ -6,10 +6,10 @@ using UnityEngine;
 public class ButtonsManager : MonoBehaviour
 {
     private GameManagement gameManagement;
-
+    public ParticleSystem particlesButtonPress;
     public ButtonController[] player1Buttons;
     public ButtonController[] player2Buttons;
-
+    
     private bool isButtonPressedStopped;
     private Queue<ButtonController> ButtonsPresseds;
 
@@ -36,10 +36,12 @@ public class ButtonsManager : MonoBehaviour
         {
             ButtonController buttonController1 = player1Buttons[indexButton];
             player1Buttons[indexButton].info.button.onClick.AddListener(() => PressButton(buttonController1, indexButton));
+            player1Buttons[indexButton].particleSystemPress = this.particlesButtonPress;
             buttonController1._ButtonManager = this;
 
             ButtonController buttonController2 = player2Buttons[indexButton];
             player2Buttons[indexButton].info.button.onClick.AddListener(() => PressButton(buttonController2, indexButton));
+            player2Buttons[indexButton].particleSystemPress = this.particlesButtonPress;
             buttonController2._ButtonManager = this;
         }
 
@@ -150,7 +152,7 @@ public class ButtonsManager : MonoBehaviour
             }
         }
     }
-# endregion InteractionButton
+
 
     public void ActivateORDeactivateButtons(bool condition)
     {
@@ -160,7 +162,7 @@ public class ButtonsManager : MonoBehaviour
             player2Buttons[indexButton].gameObject.SetActive(condition);
         }
     }
-
+# endregion InteractionButton
     public void ShowGuiButton(ButtonController buttonController, bool isCorrect)
     {
         if(isCorrect) buttonController.ShowResultToPressedButton(true, winSprite);

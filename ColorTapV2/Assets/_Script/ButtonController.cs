@@ -1,19 +1,31 @@
 using UnityEngine.UI;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
+
 
 public class ButtonController : MonoBehaviour
 {
     public ButtonsManager _ButtonManager;
     public ButtonAnimation _ButtonAnimation;
     private AudioSource _AudioSource;
+    public GridLayoutGroup glgButtons;
+
+    public Canvas canvas;
+    public ParticleSystem particleSystemPress;
 
     [SerializeField] private Button button;
     [SerializeField] private PlayerID playerID;
     [SerializeField] private int colorID;
     public ButtonInfo info;
+    public Color colorOfButton;
+
 
     private RectTransform reacTransformInformationPressing;
+    private RectTransform _RectTransform;
+    private Vector3 _TransformInWorld;
+    private Quaternion _QuaternionInWorld;
+
     private Image slotWinLoseImage;
     private Color defaultColor;
     private readonly float shrinkSpeed = 5;
@@ -25,7 +37,8 @@ public class ButtonController : MonoBehaviour
     {
         _ButtonAnimation = GetComponent<ButtonAnimation>();
         reacTransformInformationPressing = gameObject.GetComponentsInChildren<RectTransform>()[1];
-
+        _RectTransform = GetComponent<RectTransform>();
+        
         slotWinLoseImage = reacTransformInformationPressing.GetComponent<Image>();
         defaultColor = slotWinLoseImage.color;
         defaultLocalScale = reacTransformInformationPressing.localScale;
@@ -35,7 +48,72 @@ public class ButtonController : MonoBehaviour
         Button button = GetComponent<Button>();
         info = new ButtonInfo(button, playerID, colorID);
         info.button.onClick.AddListener(() => PlaySoundPress());
+        info.button.onClick.AddListener(() => ParticlePress());
 
+    }
+
+    private void Start() 
+    {
+        Vector3 worldPosition;
+        Vector3 localpositionButtonInGrid;
+        Vector3 localPositionInWorld;   
+        Vector2 localpositionInScreen;
+        RectTransform positionGrid;
+        switch (playerID)
+        {
+            case PlayerID.Player1:
+                
+                //localposition = _RectTransform.localPosition;
+
+                //Vector3 cameraPosition = canvas.worldCamera.transform.position;
+                //worldPosition = cameraPosition +localposition;
+                //RectTransformUtility.ScreenPointToWorldPointInRectangle(_RectTransform,_RectTransform.localPosition,Camera.main,out _TransformInWorld);
+                
+
+                // Obtén las coordenadas en pantalla del elemento en el Canvas
+                // screenPosition = RectTransformUtility.WorldToScreenPoint(null, _RectTransform.position);
+
+                // Ajusta la profundidad (coordenada z) para colocar el objeto detrás
+                //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10.0f));
+
+                // Coloca el objeto en las coordenadas calculadas en el World Space
+                //_TransformInWorld = worldPosition;
+                
+                //localpositionButtonInGrid = _RectTransform.localPosition;
+                //GridLayoutGroup glgButtons = _RectTransform.parent.GetComponent<GridLayoutGroup>();
+                //positionGrid = glgButtons.GetComponent<RectTransform>();
+                //Camera camera = Camera.main;
+                localpositionButtonInGrid  = transform.localPosition;
+                GridLayoutGroup gridLayoutGroup = GetComponentInParent<GridLayoutGroup>();
+                Vector3 worldButtonPosition = gridLayoutGroup.transform.TransformPoint(localpositionButtonInGrid);
+                worldButtonPosition.z -= 1.0f;
+                 // Obtiene la posición local del botón dentro del GridLayoutGroup
+                //Vector3 localPosition = _RectTransform.localPosition;
+
+                // Convierte las coordenadas locales del RectTransform a coordenadas de pantalla
+                //Vector3 screenPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, localPosition);
+                
+                //screenPosition = glgButtons.transform.TransformPoint(localPosition);
+                //_TransformInWorld = g
+                // Luego, convierte las coordenadas de pantalla al espacio del Transform de destino
+                //localPositionInWorld = new Vector3(localpositionInScreen.x, localpositionInScreen.y,0) + localpositionButtonInGrid;
+                
+                _TransformInWorld = worldButtonPosition;
+                _QuaternionInWorld = Quaternion.Euler(0,0,0);
+                Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
+                break;
+            case PlayerID.Player2:
+                worldPosition = _RectTransform.localPosition;
+
+                // Convierte las coordenadas locales del RectTransform a coordenadas de pantalla
+                //screenPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, localPosition);
+                //localposition = _RectTransform.TransformPoint(Vector3.zero);
+                // Luego, convierte las coordenadas de pantalla al espacio del Transform de destino
+                //_TransformInWorld = localposition;
+                _QuaternionInWorld = Quaternion.Euler(0,0,180);
+                Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
+                break;
+        }    
     }
 
     public void ResetDefault()
@@ -61,6 +139,17 @@ public class ButtonController : MonoBehaviour
         }
         
 
+    }
+
+    private void ParticlePress()
+    {
+        particleSystemPress.gameObject.transform.SetPositionAndRotation(_TransformInWorld, _QuaternionInWorld);
+        
+        var main = particleSystemPress.main;
+        main.startColor = colorOfButton;
+
+        particleSystemPress.Emit(20);
+   
     }
 
     public void PlaySoundPress()
