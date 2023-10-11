@@ -69,10 +69,10 @@ public class ButtonController : MonoBehaviour
                 //worldPosition = cameraPosition +localposition;
                 //RectTransformUtility.ScreenPointToWorldPointInRectangle(_RectTransform,_RectTransform.localPosition,Camera.main,out _TransformInWorld);
                 
-
+                localpositionInScreen = RectTransformUtility.WorldToScreenPoint(Camera.main,_RectTransform.position);
                 // Obtén las coordenadas en pantalla del elemento en el Canvas
                 // screenPosition = RectTransformUtility.WorldToScreenPoint(null, _RectTransform.position);
-
+                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(localpositionInScreen.x,localpositionInScreen.y,Camera.main.nearClipPlane));
                 // Ajusta la profundidad (coordenada z) para colocar el objeto detrás
                 //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10.0f));
 
@@ -83,10 +83,10 @@ public class ButtonController : MonoBehaviour
                 //GridLayoutGroup glgButtons = _RectTransform.parent.GetComponent<GridLayoutGroup>();
                 //positionGrid = glgButtons.GetComponent<RectTransform>();
                 //Camera camera = Camera.main;
-                localpositionButtonInGrid  = transform.localPosition;
-                GridLayoutGroup gridLayoutGroup = GetComponentInParent<GridLayoutGroup>();
-                Vector3 worldButtonPosition = gridLayoutGroup.transform.TransformPoint(localpositionButtonInGrid);
-                worldButtonPosition.z -= 1.0f;
+                //localpositionButtonInGrid  = transform.localPosition;
+                //GridLayoutGroup gridLayoutGroup = GetComponentInParent<GridLayoutGroup>();
+                //Vector3 worldButtonPosition = gridLayoutGroup.transform.TransformPoint(localpositionButtonInGrid);
+                //worldButtonPosition.z -= 1.0f;
                  // Obtiene la posición local del botón dentro del GridLayoutGroup
                 //Vector3 localPosition = _RectTransform.localPosition;
 
@@ -98,7 +98,7 @@ public class ButtonController : MonoBehaviour
                 // Luego, convierte las coordenadas de pantalla al espacio del Transform de destino
                 //localPositionInWorld = new Vector3(localpositionInScreen.x, localpositionInScreen.y,0) + localpositionButtonInGrid;
                 
-                _TransformInWorld = worldButtonPosition;
+                _TransformInWorld = worldPosition;
                 _QuaternionInWorld = Quaternion.Euler(0,0,0);
                 Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
                 break;
