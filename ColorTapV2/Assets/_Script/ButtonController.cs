@@ -49,7 +49,17 @@ public class ButtonController : MonoBehaviour
         info = new ButtonInfo(button, playerID, colorID);
         info.button.onClick.AddListener(() => PlaySoundPress());
         info.button.onClick.AddListener(() => ParticlePress());
+        glgButtons = GetComponentInParent<GridLayoutGroup>();
+    }
 
+    Vector3 GetCanvasPosition(RectTransform rectTransform)
+    {
+        // Convierte las coordenadas locales al espacio del Canvas
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+
+        // El centro del elemento está en la esquina inferior izquierda (corners[0])
+        return corners[0];
     }
 
     private void Start() 
@@ -69,10 +79,10 @@ public class ButtonController : MonoBehaviour
                 //worldPosition = cameraPosition +localposition;
                 //RectTransformUtility.ScreenPointToWorldPointInRectangle(_RectTransform,_RectTransform.localPosition,Camera.main,out _TransformInWorld);
                 
-                localpositionInScreen = RectTransformUtility.WorldToScreenPoint(Camera.main,_RectTransform.position);
+                //localpositionInScreen = RectTransformUtility.WorldToScreenPoint(Camera.main,_RectTransform.position);
                 // Obtén las coordenadas en pantalla del elemento en el Canvas
                 // screenPosition = RectTransformUtility.WorldToScreenPoint(null, _RectTransform.position);
-                worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(localpositionInScreen.x,localpositionInScreen.y,Camera.main.nearClipPlane));
+                //worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(localpositionInScreen.x,localpositionInScreen.y,Camera.main.nearClipPlane));
                 // Ajusta la profundidad (coordenada z) para colocar el objeto detrás
                 //Vector3 worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10.0f));
 
@@ -97,8 +107,23 @@ public class ButtonController : MonoBehaviour
                 //_TransformInWorld = g
                 // Luego, convierte las coordenadas de pantalla al espacio del Transform de destino
                 //localPositionInWorld = new Vector3(localpositionInScreen.x, localpositionInScreen.y,0) + localpositionButtonInGrid;
+
+                // Obtén la celda deseada (por ejemplo, la celda en la fila 0, columna 0)
+        // Obtén el RectTransform del elemento
+        // Obtiene el RectTransform del GridLayoutGroup
+        // Obtiene el RectTransform del botón (el componente que almacena la posición)
+        // Obtén el RectTransform del botón
+                // Obtén el RectTransform del botón
+          // Obtén el RectTransform del botón
+                //    worldPosition = GetCanvasPosition(_RectTransform);
+                 // Obten la posición local del botón en el canvas
+        
+
+        // Convierte la posición local al world space
+        
+          worldPosition = Camera.main.ScreenToWorldPoint(_RectTransform.anchoredPosition);
+        _TransformInWorld = worldPosition;
                 
-                _TransformInWorld = worldPosition;
                 _QuaternionInWorld = Quaternion.Euler(0,0,0);
                 Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
                 break;
@@ -143,6 +168,7 @@ public class ButtonController : MonoBehaviour
 
     private void ParticlePress()
     {
+
         particleSystemPress.gameObject.transform.SetPositionAndRotation(_TransformInWorld, _QuaternionInWorld);
         
         var main = particleSystemPress.main;
