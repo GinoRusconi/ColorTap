@@ -10,8 +10,8 @@ public class ButtonController : MonoBehaviour
     public ButtonAnimation _ButtonAnimation;
     private AudioSource _AudioSource;
     public GridLayoutGroup glgButtons;
-
-    public Canvas canvas;
+    public RectTransform testtransform;
+    public RectTransform canvas;
     public ParticleSystem particleSystemPress;
 
     [SerializeField] private Button button;
@@ -22,6 +22,7 @@ public class ButtonController : MonoBehaviour
 
 
     private RectTransform reacTransformInformationPressing;
+    private Transform _transform;
     private RectTransform _RectTransform;
     private Vector3 _TransformInWorld;
     private Quaternion _QuaternionInWorld;
@@ -50,6 +51,7 @@ public class ButtonController : MonoBehaviour
         info.button.onClick.AddListener(() => PlaySoundPress());
         info.button.onClick.AddListener(() => ParticlePress());
         glgButtons = GetComponentInParent<GridLayoutGroup>();
+        _transform = GetComponent<Transform>();
     }
 
     Vector3 GetCanvasPosition(RectTransform rectTransform)
@@ -67,7 +69,7 @@ public class ButtonController : MonoBehaviour
         Vector3 worldPosition;
         Vector3 localpositionButtonInGrid;
         Vector3 localPositionInWorld;   
-        Vector2 localpositionInScreen;
+        Vector3 localpositionInScreen;
         RectTransform positionGrid;
         switch (playerID)
         {
@@ -120,10 +122,22 @@ public class ButtonController : MonoBehaviour
         
 
         // Convierte la posición local al world space
+       
         
-          worldPosition = Camera.main.ScreenToWorldPoint(_RectTransform.anchoredPosition);
-        _TransformInWorld = worldPosition;
+       // if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas, localpositionInScreen, Camera.main, out worldPosition)) {
+    // worldPosition ahora contiene las coordenadas en World Space
+    // Haz lo que necesites con worldPosition
+            
+        
+          //worldPosition = Camera.main.ScreenToWorldPoint(_RectTransform.position);
+           //     localpositionInScreen = _RectTransform.transform.localPosition;
                 
+        //if (RectTransformUtility.ScreenPointToWorldPointInRectangle(canvas, localpositionInScreen, Camera.main, out  worldPosition)) {
+    // worldPosition ahora contiene las coordenadas en World Space
+    // Haz lo que necesites con worldPosition
+           //  _TransformInWorld = worldPosition;
+        //}
+               
                 _QuaternionInWorld = Quaternion.Euler(0,0,0);
                 Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
                 break;
@@ -139,6 +153,17 @@ public class ButtonController : MonoBehaviour
                 Debug.Log("Posición en el espacio mundial:  " + this + _TransformInWorld);
                 break;
         }    
+    }
+
+    private void LateUpdate() {
+        
+        Vector3 localpositionInScreen = testtransform.anchoredPosition;
+        Vector3 worldPosition;
+        //localpositionInScreen = new Vector3(localpositionInScreen.x,localpositionInScreen.y, 90);
+        worldPosition = _transform.TransformPoint(localpositionInScreen);
+        //Camera.main.ScreenToWorldPoint(localpositionInScreen);
+             _TransformInWorld = worldPosition;
+        
     }
 
     public void ResetDefault()
