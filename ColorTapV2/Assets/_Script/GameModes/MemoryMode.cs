@@ -82,7 +82,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public IEnumerator PlayerWinRound(PlayerID playerID)
     {
         gameManagement._ButtonsManager.ActivateORDeactivateButtonInteraction(playerID, false);
-        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerID, 140);
+        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerID, 20);
         countColorPress = -1;
         yield return null;
         SwitchPlayer(playerID);
@@ -111,13 +111,13 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public IEnumerator ShowButtonsOrder()
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(playerTurn, "Your Turn"));
-        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(100);
+        gameManagement._ButtonsManager.ChangeTransparencyAllButtons(20);
         foreach (var button in MemoryColorsID)
         {
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 255, true);
             mixColor.ChangeColorMainCamera(button); 
             yield return new WaitForSecondsRealtime(0.5f);
-            gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 100, false);
+            gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 20, false);
             yield return new WaitForSecondsRealtime(0.3f);
         }
 
