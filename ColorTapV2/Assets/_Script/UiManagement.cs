@@ -12,6 +12,10 @@ public class UiManagement : MonoBehaviour
     private TextMeshProUGUI PlayerWinGUI;
     private RectTransform RectTransformTextPlayerWin;
 
+    public GameObject challengeUI;
+    public TextMeshProUGUI challengeScore;
+    public TextMeshProUGUI challengeTimeText;
+
     public int scoreP1;
     public int scoreP2;
 
@@ -21,6 +25,22 @@ public class UiManagement : MonoBehaviour
         animator = GOTextPlayerWin.GetComponent<Animator>();
         PlayerWinGUI = GOTextPlayerWin.GetComponent<TextMeshProUGUI>();
         RectTransformTextPlayerWin = GOTextPlayerWin.GetComponent<RectTransform>();
+
+
+    }
+
+    public void EnabledUI(bool enabled)
+    {
+        if(enabled)
+        {
+            challengeScore.text = "0";
+            challengeTimeText.text = "10:00";
+            challengeUI.SetActive(enabled);
+        }
+        else
+        {
+            challengeUI.SetActive(enabled);
+        }
     }
 
     public void UpdateScore(PlayerID playerID)
@@ -39,6 +59,19 @@ public class UiManagement : MonoBehaviour
                 StartCoroutine(DeformScore(scorePlayer2));
                 break;
         }
+    }
+
+    public void UpdateScore(float score)
+    {
+        challengeScore.text = string.Format("{0:F2}", score);
+    }
+
+    public void UpdateTimerUI(float timer)
+    {
+        int seconds = Mathf.FloorToInt(timer); // Obtiene los segundos como parte entera.
+        int milliseconds = Mathf.FloorToInt((timer - seconds) * 1000); // Obtiene las milésimas.
+
+        challengeTimeText.text = string.Format("{0:D2}.{1:D2}", seconds, milliseconds);
     }
 
     public IEnumerator DeformScore(TMP_Text tmpText)
@@ -76,7 +109,7 @@ public class UiManagement : MonoBehaviour
 
         switch (playerWiner)
         {
-            case PlayerID.Player1:
+            case PlayerID.Player2:
                 if (PositiveOrNegative(currentPosition.x))
                 {
                     currentPosition.x *= -1;
@@ -84,7 +117,7 @@ public class UiManagement : MonoBehaviour
                     RectTransformTextPlayerWin.anchoredPosition = currentPosition;
                 }
                 break;
-            case PlayerID.Player2:
+            case PlayerID.Player1:
                 if (!PositiveOrNegative(currentPosition.x))
                 {
                     currentPosition.x *= -1;

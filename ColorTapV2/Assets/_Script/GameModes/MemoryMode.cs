@@ -81,7 +81,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
 
     public IEnumerator PlayerWinRound(PlayerID playerID)
     {
-        gameManagement._ButtonsManager.ActivateORDeactivateButtonInteraction(playerID, false);
+        gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(playerID, false);
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerID, 20);
         countColorPress = -1;
         yield return null;
@@ -92,7 +92,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
     public void PlayerWinGame(PlayerID playerID)
     {
         gameManagement.WinPlayerRound?.Invoke();
-        StartCoroutine(gameManagement.FinishMatch(playerID));
+        StartCoroutine(gameManagement.FinishMatchTwoPlayer(playerID));
     }
 
     //Animations
@@ -122,7 +122,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
         }
 
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerTurn, 255);
-        gameManagement._ButtonsManager.ActivateORDeactivateButtonInteraction(playerTurn, true);
+        gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(playerTurn, true);
 
     }
 }

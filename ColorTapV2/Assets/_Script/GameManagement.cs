@@ -28,6 +28,10 @@ public class GameManagement : MonoBehaviour
     #endregion Singleton
     public MemoryMode memoryMod;
     public VelocityMode velocityMod;
+    public ChallengeMod challengeMod;
+
+    public float HighScore;
+
     public IGameMode gameMode;
     public Camera _mainCamera;
     public ParticleSystem _particleSystemMenu;
@@ -49,6 +53,7 @@ public class GameManagement : MonoBehaviour
     [HideInInspector]public ButtonsManager _ButtonsManager;
 
     [HideInInspector] public UiManagement _UiManagement;
+    public GameObject buttonNewLife;
     private int countMatchPlaying = 0;
     private readonly int matchsToShowAds = 1;
     public GameObject menuMod;
@@ -70,10 +75,6 @@ public class GameManagement : MonoBehaviour
     public InterstitialAdExample interstitialAdExample;
     
     private void Start() {
-      
-        
-
-        
         // Obtén las dimensiones de la pantalla
         float screenHeight = Screen.height;
         float screenWidth = Screen.width;
@@ -109,6 +110,7 @@ public class GameManagement : MonoBehaviour
         {
             case 1: PlayGame(velocityMod); break;
             case 2: PlayGame(memoryMod); break;
+            case 3: PlayGame(challengeMod); break;
         }
     }
 
@@ -132,42 +134,68 @@ public class GameManagement : MonoBehaviour
         }
     }
 
-    public IEnumerator FinishMatch(PlayerID playerID)
+    public IEnumerator FinishMatchTwoPlayer(PlayerID playerID)
     {
         _UiManagement.ResetDefault();
+        FireWorks(playerID);
+        yield return StartCoroutine(_UiManagement.TextPlayer(playerID, "win"));
         
-        // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
-        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0.5f, _mainCamera.nearClipPlane));
-        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, _mainCamera.nearClipPlane));
-
-        switch (playerID)
-        {
-            case PlayerID.Player1:
-                _particleSystemWin.gameObject.transform.position = leftEdge;
-                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0,0,180);
-                break;
-            case PlayerID.Player2:
-                _particleSystemWin.gameObject.transform.position = rightEdge;
-                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0,0,0);
-                break;
-        }
-
-        _particleSystemWin.gameObject.SetActive(true);
-        yield return StartCoroutine(_UiManagement.TextPlayer(playerID,"win"));
-        while(_particleSystemWin.gameObject.activeSelf)
+        while (_particleSystemWin.gameObject.activeSelf)
         {
             yield return null;
         }
-        
+
         _UiManagement.DesactivatedScore();
         _AudioSource.Play();
         menuMod.SetActive(true);
         _EnableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
-        
+
         interstitialAdExample.LoadAd();
         yield return new WaitForFixedUpdate();
+    }
+
+    public IEnumerator FinishMatchChallenge(float score)
+    {
+        if(score > HighScore)
+        {
+            //UpdateLeaderboard
+        }
+
+        //ResetAll
+         _AudioSource.Play();
+        menuMod.SetActive(true);
+        _EnableMenu = true;
+        _particleSystemMenu.Play();
+        _ButtonsManager.ResetDefaultButtons();
+
+    }
+
+    public void NewLifeAds(bool condition)
+    {
+        buttonNewLife.SetActive(condition);
+    }
+
+    private void FireWorks(PlayerID playerID)
+    {
+        // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
+        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0.5f, _mainCamera.nearClipPlane));
+        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, _mainCamera.nearClipPlane));
+
+        switch (playerID)
+        {
+            case PlayerID.Player2:
+                _particleSystemWin.gameObject.transform.position = leftEdge;
+                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+                break;
+            case PlayerID.Player1:
+                _particleSystemWin.gameObject.transform.position = rightEdge;
+                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                break;
+        }
+
+        _particleSystemWin.gameObject.SetActive(true);
     }
 
     public IEnumerator ShowTutorial(String Text){

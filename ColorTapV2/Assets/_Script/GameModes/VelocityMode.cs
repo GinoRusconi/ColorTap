@@ -119,7 +119,7 @@ public class VelocityMode : MonoBehaviour, IGameMode
     public void PlayerWinGame(PlayerID playerID)
     {
         isShowingTutorial = false;
-        StartCoroutine(gameManagement.FinishMatch(playerID));
+        StartCoroutine(gameManagement.FinishMatchTwoPlayer(playerID));
         scoreP1 = 0;
         scoreP2 = 0;
     }

@@ -55,15 +55,16 @@ public class ButtonController : MonoBehaviour
     
     private void Start() 
     {
-        switch (playerID)
+        switch (info.playerID)
         {
             case PlayerID.Player1:
+                _QuaternionInWorld = Quaternion.Euler(0,0,180);
+                break;
+            
+            case PlayerID.Player2:
                 _QuaternionInWorld = Quaternion.Euler(0,0,0);
                 break;
 
-            case PlayerID.Player2:
-                _QuaternionInWorld = Quaternion.Euler(0,0,180);
-                break;
         }    
     }
 
@@ -141,7 +142,7 @@ public class ButtonController : MonoBehaviour
     private bool IsScalePositive(RectTransform rectTransform)
     {
         Vector3 localScale = rectTransform.localScale;
-        return (localScale.x >= 0f && localScale.y >= 0f && localScale.z >= 0f);
+        return localScale.x >= 0f && localScale.y >= 0f && localScale.z >= 0f;
     }
 }
    

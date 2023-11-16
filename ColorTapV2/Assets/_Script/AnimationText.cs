@@ -12,7 +12,6 @@ public class AnimationText : MonoBehaviour
         rtextMeshPro = GetComponent<TextMeshProUGUI>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         elapsedTime += Time.deltaTime;

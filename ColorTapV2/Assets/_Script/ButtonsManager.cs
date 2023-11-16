@@ -119,7 +119,7 @@ public class ButtonsManager : MonoBehaviour
         if (!condition) buttonController.ChangeTransparency(100);
     }
 
-    public void ActivateORDeactivateButtonInteraction(PlayerID playerID, bool condition)
+    public void ActivateORDeactivateButtonsInteraction(PlayerID playerID, bool condition)
     {
         switch (playerID)
         {
@@ -127,12 +127,14 @@ public class ButtonsManager : MonoBehaviour
                 foreach (var button in player1Buttons)
                 {
                     button.info.button.interactable = condition;
+                    button.ChangeTransparency(100);
                 }
                 break;
             case PlayerID.Player2:
                 foreach (var button in player2Buttons)
                 {
                     button.info.button.interactable = condition;
+                    button.ChangeTransparency(100);
                 }
                 break;
         }
