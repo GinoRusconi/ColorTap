@@ -169,7 +169,7 @@ public class GameManagement : MonoBehaviour
         _EnableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
-
+        yield return null;
     }
 
     public void NewLifeAds(bool condition)

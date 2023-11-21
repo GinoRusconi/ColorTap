@@ -120,6 +120,11 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         StartCoroutine(ShowButtonsOrder());
     }
 
+    public void RestartRound(bool condition)
+    {
+
+    }
+
     private IEnumerator TimeCounter()
     {
         while (timeLeft > 0)
