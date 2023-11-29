@@ -101,8 +101,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
     {
         Debug.Log($"Start Game");
         yield return gameManagement.ShowTutorial(textTutorial);
-        gameManagement.animatorPlayer1.SetTrigger("StartGame");
-        gameManagement.animatorPlayer2.SetTrigger("StartGame");
+        gameManagement.OnStartGameOrFinishMode?.Invoke();
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(false);
         yield return new WaitForSeconds(2f);
         AddColorIDToList();

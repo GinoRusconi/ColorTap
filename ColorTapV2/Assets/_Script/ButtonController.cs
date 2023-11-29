@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class ButtonController : MonoBehaviour
 {
     public ButtonsManager _ButtonManager;
-    public ButtonAnimation _ButtonAnimation;
     private AudioSource _AudioSource;
     public GridLayoutGroup glgButtons;
     public RectTransform testtransform;
@@ -36,7 +35,7 @@ public class ButtonController : MonoBehaviour
 
     private void Awake()
     {
-        _ButtonAnimation = GetComponent<ButtonAnimation>();
+        
         reacTransformInformationPressing = gameObject.GetComponentsInChildren<RectTransform>()[1];
         _RectTransform = GetComponent<RectTransform>();
         _transform = GetComponent<Transform>();

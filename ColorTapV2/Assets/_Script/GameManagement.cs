@@ -30,7 +30,7 @@ public class GameManagement : MonoBehaviour
     public VelocityMode velocityMod;
     public ChallengeMod challengeMod;
 
-    public float HighScore;
+    public float HighScore = 0;
 
     public IGameMode gameMode;
     public Camera _mainCamera;
@@ -44,7 +44,9 @@ public class GameManagement : MonoBehaviour
     public float targetPoint;
     private float timeDelayColor = 2;
 
+    public Action OnStartGameOrFinishMode;
     public Action WinPlayerRound;
+    public Action CloseUI;
     public Action ResetRound;
    
     public AudioClip mainMenuAudio;
@@ -78,7 +80,7 @@ public class GameManagement : MonoBehaviour
         // Obtén las dimensiones de la pantalla
         float screenHeight = Screen.height;
         float screenWidth = Screen.width;
-
+        menuMod.SetActive(true);
         // Calcula la posición del borde superior e inferior a la mitad de la pantalla
         topEdgeY = screenHeight * 0.5f;
         bottomEdgeY = -screenHeight * 0.5f;    
@@ -124,19 +126,28 @@ public class GameManagement : MonoBehaviour
 
         } else
         {
-            menuMod.SetActive(false);
-            _EnableMenu = false;
-            _particleSystemMenu.Stop();
-            //countMatchPlaying++;
-            this.gameMode = gameMode;
-            gameMode.IGameMode(this, _MixColor);
-            gameMode.NewRound();
+            StartCoroutine(InitMod(gameMode));
         }
+    }
+
+    private IEnumerator InitMod(IGameMode gameMode)
+    {
+        CloseUI?.Invoke();
+        
+        yield return new WaitForSeconds(1f);
+        //menuMod.SetActive(false);
+        _EnableMenu = false;
+        _particleSystemMenu.Stop();
+        //countMatchPlaying++;
+        this.gameMode = gameMode;
+        gameMode.IGameMode(this, _MixColor);
+        gameMode.NewRound();
     }
 
     public IEnumerator FinishMatchTwoPlayer(PlayerID playerID)
     {
         _UiManagement.ResetDefault();
+        OnStartGameOrFinishMode?.Invoke();
         FireWorks(playerID);
         yield return StartCoroutine(_UiManagement.TextPlayer(playerID, "win"));
         
@@ -158,18 +169,32 @@ public class GameManagement : MonoBehaviour
 
     public IEnumerator FinishMatchChallenge(float score)
     {
+        CloseUI?.Invoke();
+        OnStartGameOrFinishMode?.Invoke();
         if(score > HighScore)
         {
+            yield return NewHighScore(score);
             //UpdateLeaderboard
         }
-
+        //_UiManagement.EnabledUI(false);
         //ResetAll
-         _AudioSource.Play();
+        yield return new WaitForSeconds(1.5f);
+        _AudioSource.Play();
         menuMod.SetActive(true);
         _EnableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
         yield return null;
+    }
+
+    public IEnumerator NewHighScore(float newScore)
+    {
+        FireWorks(PlayerID.Player1);
+        yield return _UiManagement.TextPlayer(PlayerID.Player1, "HIGHSCORE");
+        while (_particleSystemWin.gameObject.activeSelf)
+        {
+            yield return null;
+        }
     }
 
     public void NewLifeAds(bool condition)

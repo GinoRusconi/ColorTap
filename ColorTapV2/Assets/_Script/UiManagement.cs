@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -70,8 +71,9 @@ public class UiManagement : MonoBehaviour
     {
         int seconds = Mathf.FloorToInt(timer); // Obtiene los segundos como parte entera.
         int milliseconds = Mathf.FloorToInt((timer - seconds) * 1000); // Obtiene las milésimas.
-
+        
         challengeTimeText.text = string.Format("{0:D2}.{1:D2}", seconds, milliseconds);
+        
     }
 
     public IEnumerator DeformScore(TMP_Text tmpText)
@@ -127,12 +129,14 @@ public class UiManagement : MonoBehaviour
                 break;
         }
 
-        
+        float to = -RectTransformTextPlayerWin.anchoredPosition.y;
+        Tween tween = RectTransformTextPlayerWin.DOAnchorPosY(to,2f,true);
 
-        // Activar la animaci�n
-        animator.SetTrigger(HashShowPlayerWin); // Inicia la animaci�n
+        yield return tween.WaitForCompletion();
+        /* Activar la animacion
+        animator.SetTrigger(HashShowPlayerWin); // Inicia la animacion
 
-        yield return null; // Espera hasta la siguiente actualizaci�n del frame
+        yield return null; // Espera hasta la siguiente actualizacion del frame
 
         bool isThatAnimation = true;
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
@@ -146,9 +150,9 @@ public class UiManagement : MonoBehaviour
         {
             stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             isThatAnimation = stateInfo.IsName("MoveInfoPlayer");
-            yield return null; // Espera hasta la siguiente actualizaci�n del frame
+            yield return null; // Espera hasta la siguiente actualizacion del frame
         }
-
+        */
     }
 
     private bool PositiveOrNegative(float num)

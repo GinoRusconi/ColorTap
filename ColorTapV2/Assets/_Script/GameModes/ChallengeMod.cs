@@ -60,6 +60,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         }
         else
         {
+            gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, false);
             //Player Lose
             if(life > 0)
             {
@@ -90,7 +91,8 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         countColorPress = -1;
     }
 
-    //En este caso el se pierde
+    //Termina el juego
+    //P1 reinicia la ronnda new life, P2 termino el juego
     public void PlayerWinGame(PlayerID playerID)
     {
         //Actualiza el LeaderBoard
@@ -102,15 +104,10 @@ public class ChallengeMod : MonoBehaviour , IGameMode
 
         }else
         {
-            score = 0;
             StopAllCoroutines();
-            gameManagement.WinPlayerRound?.Invoke();
-            gameManagement._UiManagement.EnabledUI(false);
             StartCoroutine(gameManagement.FinishMatchChallenge(score));
-            
+            score = 0;
         }
-
-        
     }
 
     public void AddColorIDToList()
@@ -150,7 +147,8 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         Debug.Log($"Start Game");
         yield return gameManagement.ShowTutorial(textTutorial);
         gameManagement._UiManagement.EnabledUI(true);
-        gameManagement.animatorPlayer1.SetTrigger("StartGame");
+        //gameManagement.animatorPlayer1.SetTrigger("StartGame");
+        gameManagement.OnStartGameOrFinishMode?.Invoke();
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1 ,false);
         yield return new WaitForSeconds(2f);
         AddColorIDToList();
