@@ -17,12 +17,12 @@ public class ButtonAnimation : MonoBehaviour
 
     private void MoveButtons ()
     {
-        float to1 = -rectTransformPlayer1.anchoredPosition.x;
-        float to2 = -rectTransformPlayer2.anchoredPosition.x;
-        rectTransformPlayer1.DOAnchorPos(new Vector2(to1, 0), 1, true)
+        float to1 = -rectTransformPlayer1.anchoredPosition.y;
+        float to2 = -rectTransformPlayer2.anchoredPosition.y;
+        rectTransformPlayer1.DOAnchorPos(new Vector2(0, to1), 1, true)
                                 .SetEase(EaseMode);
 
-        rectTransformPlayer2.DOAnchorPos(new Vector2(to2, 0), 1, true)
+        rectTransformPlayer2.DOAnchorPos(new Vector2(0,to2), 1, true)
                                 .SetEase(EaseMode);
     }
 

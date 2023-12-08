@@ -17,6 +17,7 @@ public class VelocityMode : MonoBehaviour, IGameMode
     {
         this.gameManagement = gameManagement;
         this.mixColor = mixColor;
+        gameManagement.OnStartGameOrFinishMode?.Invoke();
     }
     public void NewRound()
     {

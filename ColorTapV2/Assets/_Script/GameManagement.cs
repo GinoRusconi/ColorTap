@@ -24,6 +24,7 @@ public class GameManagement : MonoBehaviour
         _ButtonsManager = FindObjectOfType<ButtonsManager>();
         _UiManagement = FindObjectOfType<UiManagement>();
         _AudioSource = GetComponent<AudioSource>();
+        canvasGroupMenu = menuMod.GetComponent<CanvasGroup>();
     }
     #endregion Singleton
     public MemoryMode memoryMod;
@@ -59,6 +60,7 @@ public class GameManagement : MonoBehaviour
     private int countMatchPlaying = 0;
     private readonly int matchsToShowAds = 1;
     public GameObject menuMod;
+    private CanvasGroup canvasGroupMenu;
     private bool _EnableMenu = true;
 
     public Animator animatorPlayer1;
@@ -132,8 +134,8 @@ public class GameManagement : MonoBehaviour
 
     private IEnumerator InitMod(IGameMode gameMode)
     {
+        canvasGroupMenu.interactable = false;
         CloseUI?.Invoke();
-        
         yield return new WaitForSeconds(1f);
         //menuMod.SetActive(false);
         _EnableMenu = false;
@@ -159,6 +161,7 @@ public class GameManagement : MonoBehaviour
         _UiManagement.DesactivatedScore();
         _AudioSource.Play();
         menuMod.SetActive(true);
+        canvasGroupMenu.interactable = true;
         _EnableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
@@ -169,18 +172,19 @@ public class GameManagement : MonoBehaviour
 
     public IEnumerator FinishMatchChallenge(float score)
     {
-        CloseUI?.Invoke();
         OnStartGameOrFinishMode?.Invoke();
         if(score > HighScore)
         {
             yield return NewHighScore(score);
             //UpdateLeaderboard
         }
+        CloseUI?.Invoke();
         //_UiManagement.EnabledUI(false);
         //ResetAll
         yield return new WaitForSeconds(1.5f);
         _AudioSource.Play();
         menuMod.SetActive(true);
+        canvasGroupMenu.interactable = true;
         _EnableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
@@ -205,18 +209,16 @@ public class GameManagement : MonoBehaviour
     private void FireWorks(PlayerID playerID)
     {
         // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
-        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0, 0.5f, _mainCamera.nearClipPlane));
-        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(1, 0.5f, _mainCamera.nearClipPlane));
+        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3( 0.5f, 1, _mainCamera.nearClipPlane));
+        Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 0, _mainCamera.nearClipPlane));
 
         switch (playerID)
         {
             case PlayerID.Player2:
-                _particleSystemWin.gameObject.transform.position = leftEdge;
-                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
+                _particleSystemWin.gameObject.transform.SetPositionAndRotation(leftEdge, Quaternion.Euler(0, 0, 90));
                 break;
             case PlayerID.Player1:
-                _particleSystemWin.gameObject.transform.position = rightEdge;
-                _particleSystemWin.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                _particleSystemWin.gameObject.transform.SetPositionAndRotation(rightEdge, Quaternion.Euler(0, 0, 270));
                 break;
         }
 

@@ -13,10 +13,13 @@ public class UIAnimation : MonoBehaviour
     public Ease easemode;
     public float duration;
     public bool snappingSmooth;
-    Tween mytween;
+    //Tween mytween;
+    
+    AudioSource audioSource;
     
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         init = new Vector2[rectUI.Length]; 
         for (int i = 0; i < rectUI.Length; i++)
         {
@@ -32,7 +35,7 @@ public class UIAnimation : MonoBehaviour
         //currentState = animator.GetCurrentAnimatorStateInfo(0);
         for (int i = 0; i < rectUI.Length; i++)
         {
-            rectUI[i].DOAnchorPos(new Vector2(init[i].x,0), duration, snappingSmooth)
+            rectUI[i].DOAnchorPos(new Vector2(0,init[i].y), duration, snappingSmooth)
                 .SetEase(easemode);
         }
     }
@@ -47,20 +50,20 @@ public class UIAnimation : MonoBehaviour
 
     public IEnumerator AnimationUI()
     {
-        
+        audioSource.Play();
         for (int i = 0; i < rectUI.Length; i++)
         {
             if(i == rectUI.Length - 1)
             {
-                mytween = rectUI[i].DOAnchorPos(new Vector2(init[i].x,init[i].y), duration, snappingSmooth)
-                .SetEase(easemode);
-                break;
+                Tween mytween = rectUI[i].DOAnchorPos(new Vector2(init[i].x,init[i].y), duration, snappingSmooth)
+                    .SetEase(easemode);
+                yield return mytween.WaitForCompletion();
+            }else
+            {
+                rectUI[i].DOAnchorPos(new Vector2(init[i].x,init[i].y), duration, snappingSmooth)
+                    .SetEase(easemode);
             }
-            rectUI[i].DOAnchorPos(new Vector2(init[i].x,init[i].y), duration, snappingSmooth)
-                .SetEase(easemode);
         }
-         
-        yield return mytween.WaitForCompletion();
 
         gameObject.SetActive(false);
     }

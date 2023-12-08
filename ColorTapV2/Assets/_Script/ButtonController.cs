@@ -57,11 +57,11 @@ public class ButtonController : MonoBehaviour
         switch (info.playerID)
         {
             case PlayerID.Player1:
-                _QuaternionInWorld = Quaternion.Euler(0,0,180);
+                _QuaternionInWorld = Quaternion.Euler(0,0,90);
                 break;
             
             case PlayerID.Player2:
-                _QuaternionInWorld = Quaternion.Euler(0,0,0);
+                _QuaternionInWorld = Quaternion.Euler(0,0,270);
                 break;
 
         }    
@@ -69,9 +69,9 @@ public class ButtonController : MonoBehaviour
 
     private void LateUpdate() {
         
-        Vector3 localpositionInScreen = testtransform.anchoredPosition;
+       // Vector3 localpositionInScreen = testtransform.anchoredPosition;
         Vector3 worldPosition;
-        worldPosition = _transform.TransformPoint(localpositionInScreen);
+        worldPosition = _transform.TransformPoint(Vector3.zero);
         _TransformInWorld = worldPosition;
     }
 

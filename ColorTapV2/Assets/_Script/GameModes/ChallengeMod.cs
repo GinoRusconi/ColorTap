@@ -7,7 +7,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
 {
     public GameManagement gameManagement { get; set; }
     public MixColor mixColor { get; set; }
-    private List<int> MemoryColorsID;
+    public List<int> MemoryColorsID;
     public string textTutorial;
     private float score;
     private int countColorPress;
@@ -15,7 +15,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     private float timeLeft;
     private bool timeCountOff;
     private float timeDelay = 1f;
-
+    public AnimationCurve delaycurve;
     private int life;
 
     public void IGameMode(GameManagement gameManagement, MixColor mixColor)
@@ -60,17 +60,10 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         }
         else
         {
-            gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, false);
             //Player Lose
-            if(life > 0)
-            {
-                StopAllCoroutines();
-                gameManagement.NewLifeAds(true);
-                life--;
-            }else
-            {
-                PlayerWinGame(PlayerID.Player2);
-            }
+            gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, false);
+            StopAllCoroutines();
+            StartCoroutine(Defeat());
         }
     }
 
@@ -117,9 +110,17 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         StartCoroutine(ShowButtonsOrder());
     }
 
-    public void RestartRound(bool condition)
+    private IEnumerator Defeat()
     {
-
+        yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(PlayerID.Player1, "Defeat"));
+            if(life > 0)
+            {
+                gameManagement.NewLifeAds(true);
+                life--;
+            }else
+            {
+                PlayerWinGame(PlayerID.Player2);
+            }
     }
 
     private IEnumerator TimeCounter()
@@ -135,7 +136,8 @@ public class ChallengeMod : MonoBehaviour , IGameMode
             timeLeft -= Time.deltaTime;
             yield return null;
         }
-
+        timeLeft = 0f;
+        gameManagement._UiManagement.UpdateTimerUI(timeLeft);
         timeCountOff = true;
         gameManagement.NewLifeAds(true);
     }
@@ -158,15 +160,17 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(PlayerID.Player1, "Next Turn"));
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(PlayerID.Player1, 20);
+        float timedelay = delaycurve.Evaluate(MemoryColorsID.Count);
+        Debug.Log(timedelay);
         foreach (var button in MemoryColorsID)
         {
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(PlayerID.Player1, button, 255, true);
             mixColor.ChangeColorMainCamera(button); 
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return new WaitForSecondsRealtime(timedelay);
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(PlayerID.Player1, button, 20, false);
-            yield return new WaitForSecondsRealtime(0.3f);
+            yield return new WaitForSecondsRealtime(0.05f);
         }
-
+        yield return new WaitForSecondsRealtime(0.25f);
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(PlayerID.Player1, 255);
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, true);
        

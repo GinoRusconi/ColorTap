@@ -71,10 +71,10 @@ public class RewardedAdsButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAds
             GameManagement.Instance.gameMode.PlayerWinGame(PlayerID.Player2);
         }
         
-        parentUI.SetActive(false);
+        //parentUI.SetActive(false);
         GameManagement.Instance.NewLifeAds(false);
     }
- 
+    
     // Implement Load and Show Listener error callbacks:
     public void OnUnityAdsFailedToLoad(string adUnitId, UnityAdsLoadError error, string message)
     {
@@ -90,7 +90,13 @@ public class RewardedAdsButton : MonoBehaviour, IUnityAdsLoadListener, IUnityAds
  
     public void OnUnityAdsShowStart(string adUnitId) { }
     public void OnUnityAdsShowClick(string adUnitId) { }
- 
+    
+    public void Nobonus()
+    {
+        GameManagement.Instance.gameMode.PlayerWinGame(PlayerID.Player2);
+        GameManagement.Instance.NewLifeAds(false);
+    }
+
     void OnDestroy()
     {
         // Clean up the button listeners:

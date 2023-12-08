@@ -12,6 +12,7 @@ public class UiManagement : MonoBehaviour
     private Animator animator;
     private TextMeshProUGUI PlayerWinGUI;
     private RectTransform RectTransformTextPlayerWin;
+    private AudioSource audioSource;
 
     public GameObject challengeUI;
     public TextMeshProUGUI challengeScore;
@@ -20,14 +21,20 @@ public class UiManagement : MonoBehaviour
     public int scoreP1;
     public int scoreP2;
 
+    Sequence mySequence;
+    public float timeAnimationDelay;
+    private float to;
+
     private readonly int HashShowPlayerWin = Animator.StringToHash("ShowWinPlayer");
     private void Awake()
     {
         animator = GOTextPlayerWin.GetComponent<Animator>();
         PlayerWinGUI = GOTextPlayerWin.GetComponent<TextMeshProUGUI>();
         RectTransformTextPlayerWin = GOTextPlayerWin.GetComponent<RectTransform>();
+        audioSource = GetComponent<AudioSource>();
 
-
+        
+                    
     }
 
     public void EnabledUI(bool enabled)
@@ -111,48 +118,34 @@ public class UiManagement : MonoBehaviour
 
         switch (playerWiner)
         {
-            case PlayerID.Player2:
-                if (PositiveOrNegative(currentPosition.x))
-                {
-                    currentPosition.x *= -1;
-                    RotateRectTransform(RectTransformTextPlayerWin, 270f);
-                    RectTransformTextPlayerWin.anchoredPosition = currentPosition;
-                }
-                break;
             case PlayerID.Player1:
-                if (!PositiveOrNegative(currentPosition.x))
+                if (PositiveOrNegative(currentPosition.y))
                 {
-                    currentPosition.x *= -1;
-                    RotateRectTransform(RectTransformTextPlayerWin, 90f);
+                    currentPosition.y *= -1;
+                    RotateRectTransform(RectTransformTextPlayerWin, 0f);
+                    RectTransformTextPlayerWin.anchoredPosition = currentPosition;
+                }
+                break;
+            case PlayerID.Player2:
+                if (!PositiveOrNegative(currentPosition.y))
+                {
+                    currentPosition.y *= -1;
+                    RotateRectTransform(RectTransformTextPlayerWin, 180f);
                     RectTransformTextPlayerWin.anchoredPosition = currentPosition;
                 }
                 break;
         }
 
-        float to = -RectTransformTextPlayerWin.anchoredPosition.y;
-        Tween tween = RectTransformTextPlayerWin.DOAnchorPosY(to,2f,true);
-
-        yield return tween.WaitForCompletion();
-        /* Activar la animacion
-        animator.SetTrigger(HashShowPlayerWin); // Inicia la animacion
-
-        yield return null; // Espera hasta la siguiente actualizacion del frame
-
-        bool isThatAnimation = true;
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        while (animator.IsInTransition(0))
-        {
-            yield return null;
-        }
-
-        while (isThatAnimation && stateInfo.normalizedTime < 1f)
-        {
-            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            isThatAnimation = stateInfo.IsName("MoveInfoPlayer");
-            yield return null; // Espera hasta la siguiente actualizacion del frame
-        }
-        */
+       to = -RectTransformTextPlayerWin.anchoredPosition.x;
+        
+        mySequence = DOTween.Sequence();
+        mySequence.Append(RectTransformTextPlayerWin.DOAnchorPosX(0,0.1f,true))
+                    .AppendCallback(()=>audioSource.Play())
+                    .AppendInterval(timeAnimationDelay)
+                    .Append(RectTransformTextPlayerWin.DOAnchorPosX(to,0.1f,true)).SetEase(Ease.InOutQuint);
+                    
+        //audioSource.Play();
+        yield return mySequence.WaitForCompletion();
     }
 
     private bool PositiveOrNegative(float num)
@@ -178,5 +171,9 @@ public class UiManagement : MonoBehaviour
     {
         scoreP1 = 0;
         scoreP2 = 0;    
+    }
+
+    private void OnDestroy() {
+        
     }
 }

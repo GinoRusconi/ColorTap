@@ -12,7 +12,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
     private List<int> MemoryColorsID;
     private int countColorPress;
     private PlayerID playerTurn;
-
+    public AnimationCurve delaycurve;
 
     public void IGameMode(GameManagement gameManagement, MixColor mixColor)
     {
@@ -111,15 +111,16 @@ public class MemoryMode : MonoBehaviour, IGameMode
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(playerTurn, "Your Turn"));
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(20);
+        float timedelay = delaycurve.Evaluate(MemoryColorsID.Count);
         foreach (var button in MemoryColorsID)
         {
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 255, true);
             mixColor.ChangeColorMainCamera(button); 
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return new WaitForSecondsRealtime(timedelay);
             gameManagement._ButtonsManager.ChangeTransparencyAButtons(playerTurn, button, 20, false);
-            yield return new WaitForSecondsRealtime(0.3f);
+            yield return new WaitForSecondsRealtime(0.05f);
         }
-
+        yield return new WaitForSecondsRealtime(0.25f);
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerTurn, 255);
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(playerTurn, true);
 
