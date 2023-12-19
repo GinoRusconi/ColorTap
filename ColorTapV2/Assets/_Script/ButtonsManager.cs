@@ -24,7 +24,7 @@ public class ButtonsManager : MonoBehaviour
     void Start()
     {
         gameManagement = GameManagement.Instance;
-        gameManagement.WinPlayerRound += DesactivateAllButtons;
+        gameManagement.OnWinPlayerRound += DesactivateAllButtons;
 
 
         ButtonsPresseds = new Queue<ButtonController>();
@@ -52,7 +52,7 @@ public class ButtonsManager : MonoBehaviour
     private void PressButton(ButtonController buttonController, int indexButton)
     {
         if (isButtonPressedStopped) return;
-        gameManagement.gameMode.CheckConditionWin(buttonController);
+        gameManagement.GameMode.CheckConditionWin(buttonController);
 
         ButtonsPresseds.Enqueue(buttonController);
     }

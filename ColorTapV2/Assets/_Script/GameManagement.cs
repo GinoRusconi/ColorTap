@@ -23,85 +23,74 @@ public class GameManagement : MonoBehaviour
         _MixColor = FindObjectOfType<MixColor>();
         _ButtonsManager = FindObjectOfType<ButtonsManager>();
         _UiManagement = FindObjectOfType<UiManagement>();
-        _AudioSource = GetComponent<AudioSource>();
-        canvasGroupMenu = menuMod.GetComponent<CanvasGroup>();
+        _audioSource = GetComponent<AudioSource>();
+        _canvasGroupMenu = menuMod.GetComponent<CanvasGroup>();
     }
     #endregion Singleton
-    public MemoryMode memoryMod;
-    public VelocityMode velocityMod;
-    public ChallengeMod challengeMod;
-
-    public float HighScore = 0;
-
-    public IGameMode gameMode;
-    public Camera _mainCamera;
-    public ParticleSystem _particleSystemMenu;
-    public ParticleSystem _particleSystemWin;
-    private float topEdgeY;
-    private float bottomEdgeY;
-
-    public int currentColorIndex = 0;
-    public int targetIndexColor = 1;
-    public float targetPoint;
-    private float timeDelayColor = 2;
-
-    public Action OnStartGameOrFinishMode;
-    public Action WinPlayerRound;
-    public Action CloseUI;
-    public Action ResetRound;
    
-    public AudioClip mainMenuAudio;
-    private AudioSource _AudioSource;
+    #region GamesModes
+    [Header("Mods")]
+    public MemoryMode MemoryMod;
+    public VelocityMode VelocityMod;
+    public ChallengeMode ChallengeMod; 
+    public IGameMode GameMode { get; private set; }
+    #endregion GamesModes
+    
+    private float _highScore = 0;
 
-    [HideInInspector]public ButtonsManager _ButtonsManager;
-
-    [HideInInspector] public UiManagement _UiManagement;
+    [Header("Referencias")]
+    public Camera _mainCamera;
     public GameObject buttonNewLife;
-    private int countMatchPlaying = 0;
-    private readonly int matchsToShowAds = 1;
     public GameObject menuMod;
-    private CanvasGroup canvasGroupMenu;
-    private bool _EnableMenu = true;
-
-    public Animator animatorPlayer1;
-    public Animator animatorPlayer2;
-
     public TextMeshProUGUI textPlayerWin;
-
+    public TextMeshProUGUI tmpTutorial;
+    [HideInInspector] public ButtonsManager _ButtonsManager;
+    [HideInInspector] public UiManagement _UiManagement;
+    [HideInInspector] public MixColor _MixColor;
+    private AudioSource _audioSource;
+    private CanvasGroup _canvasGroupMenu;
+    
+    [Header("Reference Sprites")]
     public Sprite winSprite;
     public Sprite loseSprite;
 
-    public TextMeshProUGUI tmpTutorial;
 
+    [Header("Particles")]
+    public ParticleSystem _particleSystemMenu;
+    public ParticleSystem _particleSystemWin;
 
-    [HideInInspector] public MixColor _MixColor;
+    
+    private int _currentColorIndex = 0;
+    private int _targetIndexColor = 1;
+    private float _targetPoint;
+    private const float TimeDelayColor = 2;
+    
+
+    public Action OnStartGameOrFinishMode;
+    public Action OnWinPlayerRound;
+    public Action OnCloseUI;
+    public Action OnResetRound;
+   
+    private int _countMatchPlaying = 0;
+    private bool _enableMenu = true;
+    private const int MatchsToShowAds = 1;
 
     public InterstitialAdExample interstitialAdExample;
-    
-    private void Start() {
-        // Obtén las dimensiones de la pantalla
-        float screenHeight = Screen.height;
-        float screenWidth = Screen.width;
-        menuMod.SetActive(true);
-        // Calcula la posición del borde superior e inferior a la mitad de la pantalla
-        topEdgeY = screenHeight * 0.5f;
-        bottomEdgeY = -screenHeight * 0.5f;    
-    }
 
     private void Update() {
 
-        if(_EnableMenu){
+        if(_enableMenu){
 
-            targetPoint += Time.deltaTime / timeDelayColor;
-            _mainCamera.backgroundColor = Color.Lerp(_MixColor.colors[currentColorIndex],_MixColor.colors[targetIndexColor],targetPoint);
+            _targetPoint += Time.deltaTime / TimeDelayColor;
+            _mainCamera.backgroundColor = Color.Lerp(_MixColor.colors[_currentColorIndex],_MixColor.colors[_targetIndexColor],_targetPoint);
 
-            if(targetPoint >= 1f){
-                targetPoint = 0f;
+            if(_targetPoint >= 1f){
+                _targetPoint = 0f;
 
-                currentColorIndex = targetIndexColor;
-                targetIndexColor++;
-                if(targetIndexColor == _MixColor.colors.Length){
-                    targetIndexColor = 0;
+                _currentColorIndex = _targetIndexColor;
+                _targetIndexColor++;
+                if(_targetIndexColor == _MixColor.colors.Length){
+                    _targetIndexColor = 0;
                 }
             }
         }
@@ -109,21 +98,21 @@ public class GameManagement : MonoBehaviour
 
     public void SetGameMode(int gameMode)
     {
-        _AudioSource.Stop();
+        _audioSource.Stop();
         switch (gameMode)
         {
-            case 1: PlayGame(velocityMod); break;
-            case 2: PlayGame(memoryMod); break;
-            case 3: PlayGame(challengeMod); break;
+            case 1: PlayGame(VelocityMod); break;
+            case 2: PlayGame(MemoryMod); break;
+            case 3: PlayGame(ChallengeMod); break;
         }
     }
 
 
     private void PlayGame(IGameMode gameMode)
     {
-        if (countMatchPlaying >= matchsToShowAds)
+        if (_countMatchPlaying >= MatchsToShowAds)
         {
-            countMatchPlaying = 0;
+            _countMatchPlaying = 0;
             interstitialAdExample.ShowAd();
 
         } else
@@ -134,16 +123,15 @@ public class GameManagement : MonoBehaviour
 
     private IEnumerator InitMod(IGameMode gameMode)
     {
-        canvasGroupMenu.interactable = false;
-        CloseUI?.Invoke();
+        _canvasGroupMenu.interactable = false;
+        OnCloseUI?.Invoke();
         yield return new WaitForSeconds(1f);
-        //menuMod.SetActive(false);
-        _EnableMenu = false;
+        _enableMenu = false;
         _particleSystemMenu.Stop();
         //countMatchPlaying++;
-        this.gameMode = gameMode;
-        gameMode.IGameMode(this, _MixColor);
-        gameMode.NewRound();
+        GameMode = gameMode;
+        GameMode.IGameMode(this, _MixColor);
+        GameMode.NewRound();
     }
 
     public IEnumerator FinishMatchTwoPlayer(PlayerID playerID)
@@ -159,12 +147,14 @@ public class GameManagement : MonoBehaviour
         }
 
         _UiManagement.DesactivatedScore();
-        _AudioSource.Play();
+        _audioSource.Play();
         menuMod.SetActive(true);
-        canvasGroupMenu.interactable = true;
-        _EnableMenu = true;
+        _canvasGroupMenu.interactable = true;
+        _enableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
+
+        
 
         interstitialAdExample.LoadAd();
         yield return new WaitForFixedUpdate();
@@ -173,19 +163,19 @@ public class GameManagement : MonoBehaviour
     public IEnumerator FinishMatchChallenge(float score)
     {
         OnStartGameOrFinishMode?.Invoke();
-        if(score > HighScore)
+        if(score > _highScore)
         {
             yield return NewHighScore(score);
             //UpdateLeaderboard
         }
-        CloseUI?.Invoke();
+        OnCloseUI?.Invoke();
         //_UiManagement.EnabledUI(false);
         //ResetAll
         yield return new WaitForSeconds(1.5f);
-        _AudioSource.Play();
+        _audioSource.Play();
         menuMod.SetActive(true);
-        canvasGroupMenu.interactable = true;
-        _EnableMenu = true;
+        _canvasGroupMenu.interactable = true;
+        _enableMenu = true;
         _particleSystemMenu.Play();
         _ButtonsManager.ResetDefaultButtons();
         yield return null;
@@ -209,7 +199,7 @@ public class GameManagement : MonoBehaviour
     private void FireWorks(PlayerID playerID)
     {
         // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
-        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3( 0.5f, 1, _mainCamera.nearClipPlane));
+        Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 1, _mainCamera.nearClipPlane));
         Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 0, _mainCamera.nearClipPlane));
 
         switch (playerID)

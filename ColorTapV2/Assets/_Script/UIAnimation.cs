@@ -31,7 +31,7 @@ public class UIAnimation : MonoBehaviour
     private void OnEnable() {
 
         //ReverseAnimationToCurrent();
-        GameManagement.Instance.CloseUI += ReverseAnimationToCurrent;
+        GameManagement.Instance.OnCloseUI += ReverseAnimationToCurrent;
         //currentState = animator.GetCurrentAnimatorStateInfo(0);
         for (int i = 0; i < rectUI.Length; i++)
         {
@@ -69,6 +69,6 @@ public class UIAnimation : MonoBehaviour
     }
 
     private void OnDisable() {
-        GameManagement.Instance.CloseUI -= ReverseAnimationToCurrent;
+        GameManagement.Instance.OnCloseUI -= ReverseAnimationToCurrent;
     }
 }

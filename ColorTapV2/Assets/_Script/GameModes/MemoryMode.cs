@@ -91,7 +91,7 @@ public class MemoryMode : MonoBehaviour, IGameMode
 
     public void PlayerWinGame(PlayerID playerID)
     {
-        gameManagement.WinPlayerRound?.Invoke();
+        gameManagement.OnWinPlayerRound?.Invoke();
         StartCoroutine(gameManagement.FinishMatchTwoPlayer(playerID));
     }
 

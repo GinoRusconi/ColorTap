@@ -44,7 +44,7 @@ public class VelocityMode : MonoBehaviour, IGameMode
         if (buttonController.info.colorID == RandomColorSelect)
         {
             gameManagement._ButtonsManager.ShowGuiButton(buttonController, true);
-            gameManagement.WinPlayerRound?.Invoke();
+            gameManagement.OnWinPlayerRound?.Invoke();
             Debug.Log("Actualizacion de Gui");
             StartCoroutine(PlayerWinRound(buttonController.info.playerID));
         }else

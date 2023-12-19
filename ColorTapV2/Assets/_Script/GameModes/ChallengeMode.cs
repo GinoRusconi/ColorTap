@@ -3,33 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChallengeMod : MonoBehaviour , IGameMode
+public class ChallengeMode : MonoBehaviour , IGameMode
 {
     public GameManagement gameManagement { get; set; }
     public MixColor mixColor { get; set; }
     public List<int> MemoryColorsID;
     public string textTutorial;
-    private float score;
-    private int countColorPress;
+    private float _score;
+    private int _countColorPress;
     public int timeInitial;
-    private float timeLeft;
+    private float _timeLeft;
     private bool timeCountOff;
-    private float timeDelay = 1f;
-    public AnimationCurve delaycurve;
-    private int life;
+    private float _timeDelay = 1f;
+    public AnimationCurve delayCurveShowingButton;
+    private int _life;
 
     public void IGameMode(GameManagement gameManagement, MixColor mixColor)
     {
         MemoryColorsID = new List<int>();
         this.gameManagement = gameManagement;
         this.mixColor = mixColor;
-        life = 1;
+        _life = 1;
     }
 
     public void NewRound()
     {
        //Start Game Mode
-       countColorPress = -1;
+       _countColorPress = -1;
        timeCountOff= false;
        MemoryColorsID.Clear();
        
@@ -39,24 +39,24 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     public void CheckConditionWin(ButtonController buttonController)
     {
         // Chequear si gano o si perdio.
-        countColorPress++;
+        _countColorPress++;
 
-        if (buttonController.info.colorID == MemoryColorsID[countColorPress])
+        if (buttonController.info.colorID == MemoryColorsID[_countColorPress])
         {
-            score += timeLeft;
-            float scoreRound = (float)Math.Round(score,2);
+            _score += _timeLeft;
+            float scoreRound = (float)Math.Round(_score,2);
             gameManagement._UiManagement.UpdateScore(scoreRound);
             Debug.Log(scoreRound);
-            if (MemoryColorsID.Count == (countColorPress + 1))
+            if (MemoryColorsID.Count == (_countColorPress + 1))
             {
                 //StartNewRound
                 //StopCoroutine(TimeCounter());                
                 StopAllCoroutines();
                 StartCoroutine(PlayerWinRound(PlayerID.Player1));
             }
-            timeLeft = timeInitial;
-            timeDelay = 1f;
-            gameManagement._UiManagement.UpdateTimerUI(timeLeft);
+            _timeLeft = timeInitial;
+            _timeDelay = 1f;
+            gameManagement._UiManagement.UpdateTimerUI(_timeLeft);
         }
         else
         {
@@ -81,7 +81,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     {
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(playerID, false);
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(playerID, 20);
-        countColorPress = -1;
+        _countColorPress = -1;
     }
 
     //Termina el juego
@@ -98,8 +98,8 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         }else
         {
             StopAllCoroutines();
-            StartCoroutine(gameManagement.FinishMatchChallenge(score));
-            score = 0;
+            StartCoroutine(gameManagement.FinishMatchChallenge(_score));
+            _score = 0;
         }
     }
 
@@ -113,10 +113,10 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     private IEnumerator Defeat()
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(PlayerID.Player1, "Defeat"));
-            if(life > 0)
+            if(_life > 0)
             {
                 gameManagement.NewLifeAds(true);
-                life--;
+                _life--;
             }else
             {
                 PlayerWinGame(PlayerID.Player2);
@@ -125,19 +125,19 @@ public class ChallengeMod : MonoBehaviour , IGameMode
 
     private IEnumerator TimeCounter()
     {
-        while (timeLeft > 0)
+        while (_timeLeft > 0)
         {
-            gameManagement._UiManagement.UpdateTimerUI(timeLeft);
-            while(timeDelay > 0)
+            gameManagement._UiManagement.UpdateTimerUI(_timeLeft);
+            while(_timeDelay > 0)
             {
-                timeDelay -= Time.deltaTime;
+                _timeDelay -= Time.deltaTime;
                 yield return null;
             }
-            timeLeft -= Time.deltaTime;
+            _timeLeft -= Time.deltaTime;
             yield return null;
         }
-        timeLeft = 0f;
-        gameManagement._UiManagement.UpdateTimerUI(timeLeft);
+        _timeLeft = 0f;
+        gameManagement._UiManagement.UpdateTimerUI(_timeLeft);
         timeCountOff = true;
         gameManagement.NewLifeAds(true);
     }
@@ -160,7 +160,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
     {
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(PlayerID.Player1, "Next Turn"));
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(PlayerID.Player1, 20);
-        float timedelay = delaycurve.Evaluate(MemoryColorsID.Count);
+        float timedelay = delayCurveShowingButton.Evaluate(MemoryColorsID.Count);
         Debug.Log(timedelay);
         foreach (var button in MemoryColorsID)
         {
@@ -174,7 +174,7 @@ public class ChallengeMod : MonoBehaviour , IGameMode
         gameManagement._ButtonsManager.ChangeTransparencyAllButtons(PlayerID.Player1, 255);
         gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, true);
        
-        timeLeft = timeInitial;
+        _timeLeft = timeInitial;
         StartCoroutine(TimeCounter());
     }
 }

@@ -136,7 +136,7 @@ public class ReadmeEditor : Editor
             {
                 GUILayout.Label(section.text, BodyStyle);
             }
-
+            
             if (!string.IsNullOrEmpty(section.linkText))
             {
                 if (LinkLabel(new GUIContent(section.linkText)))
@@ -224,7 +224,7 @@ public class ReadmeEditor : Editor
 
         m_Initialized = true;
     }
-
+    
     bool LinkLabel(GUIContent label, params GUILayoutOption[] options)
     {
         var position = GUILayoutUtility.GetRect(label, LinkStyle, options);

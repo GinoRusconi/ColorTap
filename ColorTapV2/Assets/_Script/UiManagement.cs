@@ -5,18 +5,18 @@ using UnityEngine;
 
 public class UiManagement : MonoBehaviour
 {
-    public TextMeshProUGUI scorePlayer1;
-    public TextMeshProUGUI scorePlayer2;
+    public TMP_Text scorePlayer1;
+    public TMP_Text scorePlayer2;
 
     public GameObject GOTextPlayerWin;
     private Animator animator;
-    private TextMeshProUGUI PlayerWinGUI;
-    private RectTransform RectTransformTextPlayerWin;
+    private TMP_Text PlayerWinGUI;
+    public RectTransform RectTransformTextPlayerWin;
     private AudioSource audioSource;
 
     public GameObject challengeUI;
-    public TextMeshProUGUI challengeScore;
-    public TextMeshProUGUI challengeTimeText;
+    public TMP_Text challengeScore;
+    public TMP_Text challengeTimeText;
 
     public int scoreP1;
     public int scoreP2;
@@ -29,8 +29,8 @@ public class UiManagement : MonoBehaviour
     private void Awake()
     {
         animator = GOTextPlayerWin.GetComponent<Animator>();
-        PlayerWinGUI = GOTextPlayerWin.GetComponent<TextMeshProUGUI>();
-        RectTransformTextPlayerWin = GOTextPlayerWin.GetComponent<RectTransform>();
+        PlayerWinGUI = GOTextPlayerWin.GetComponent<TMP_Text>();
+        //RectTransformTextPlayerWin = GOTextPlayerWin.GetComponent<RectTransform>();
         audioSource = GetComponent<AudioSource>();
 
         
