@@ -18,6 +18,8 @@ public class MixColor : MonoBehaviour
     public Camera mainCamera;
     public AudioClip[] audioClips;
     private AudioSource _AudioSource;
+    private int countColors = 0;
+    private int lastColor = 1;
 
     private void Awake()
     {
@@ -67,8 +69,24 @@ public class MixColor : MonoBehaviour
 
     public int GetRandomColor()
     {
-        int randomColorID = Random.Range(0, _MaxRangeColor);
+        bool isSameColor;
+        int randomColorID;
+        do
+        {
+            randomColorID = Random.Range(0, _MaxRangeColor);
+            if(lastColor == randomColorID && countColors > 2){
+                isSameColor = true;
+            }else if(lastColor == randomColorID && countColors < 2){
+                isSameColor = false;
+                countColors++;
+            }else{
+                isSameColor = false;
+                countColors = 0;
+            }
+            
+        } while (isSameColor);
 
+        lastColor = randomColorID;
         return randomColorID;
     }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using System;
+using GooglePlayGames;
 
 public class GameManagement : MonoBehaviour
 {
@@ -35,8 +36,6 @@ public class GameManagement : MonoBehaviour
     public ChallengeMode ChallengeMod; 
     public IGameMode GameMode { get; private set; }
     #endregion GamesModes
-    
-    private float _highScore = 0;
 
     [Header("Referencias")]
     public Camera _mainCamera;
@@ -47,6 +46,7 @@ public class GameManagement : MonoBehaviour
     [HideInInspector] public ButtonsManager _ButtonsManager;
     [HideInInspector] public UiManagement _UiManagement;
     [HideInInspector] public MixColor _MixColor;
+    public PlayGameService playGameService;
     private AudioSource _audioSource;
     private CanvasGroup _canvasGroupMenu;
     
@@ -72,10 +72,18 @@ public class GameManagement : MonoBehaviour
     public Action OnResetRound;
    
     private int _countMatchPlaying = 0;
+    private bool _IsShowTutorialPlayGameService;
+    public GameObject recomendationPlayGame;
     private bool _enableMenu = true;
     private const int MatchsToShowAds = 1;
 
-    public InterstitialAdExample interstitialAdExample;
+    //public InterstitialAdExample interstitialAdExample;
+
+    
+    void Start()
+    {
+        Application.targetFrameRate = 60;
+    }
 
     private void Update() {
 
@@ -105,7 +113,9 @@ public class GameManagement : MonoBehaviour
             case 2: PlayGame(MemoryMod); break;
             case 3: PlayGame(ChallengeMod); break;
         }
+        playGameService.HideUI();
     }
+
 
 
     private void PlayGame(IGameMode gameMode)
@@ -113,7 +123,7 @@ public class GameManagement : MonoBehaviour
         if (_countMatchPlaying >= MatchsToShowAds)
         {
             _countMatchPlaying = 0;
-            interstitialAdExample.ShowAd();
+            //interstitialAdExample.ShowAd();
 
         } else
         {
@@ -152,22 +162,22 @@ public class GameManagement : MonoBehaviour
         _canvasGroupMenu.interactable = true;
         _enableMenu = true;
         _particleSystemMenu.Play();
+        playGameService.HideUI();
         _ButtonsManager.ResetDefaultButtons();
 
         
 
-        interstitialAdExample.LoadAd();
+        //interstitialAdExample.LoadAd();
         yield return new WaitForFixedUpdate();
     }
 
     public IEnumerator FinishMatchChallenge(float score)
     {
         OnStartGameOrFinishMode?.Invoke();
-        if(score > _highScore)
-        {
-            yield return NewHighScore(score);
-            //UpdateLeaderboard
-        }
+         //UpdateLeaderboard
+        if(playGameService.UpgradeLeaderBoard(score)) yield return NewHighScore(score);
+            
+        
         OnCloseUI?.Invoke();
         //_UiManagement.EnabledUI(false);
         //ResetAll
@@ -177,11 +187,12 @@ public class GameManagement : MonoBehaviour
         _canvasGroupMenu.interactable = true;
         _enableMenu = true;
         _particleSystemMenu.Play();
+        playGameService.HideUI();
         _ButtonsManager.ResetDefaultButtons();
         yield return null;
     }
 
-    public IEnumerator NewHighScore(float newScore)
+    private IEnumerator NewHighScore(float newScore)
     {
         FireWorks(PlayerID.Player1);
         yield return _UiManagement.TextPlayer(PlayerID.Player1, "HIGHSCORE");
@@ -198,7 +209,7 @@ public class GameManagement : MonoBehaviour
 
     private void FireWorks(PlayerID playerID)
     {
-        // Calcula las coordenadas en el mundo para los bordes izquierdo y derecho de la pantalla
+        // Calcula las coordenadas en el mundo para los bordes Inferior y superior de la pantalla
         Vector3 leftEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 1, _mainCamera.nearClipPlane));
         Vector3 rightEdge = _mainCamera.ViewportToWorldPoint(new Vector3(0.5f, 0, _mainCamera.nearClipPlane));
 

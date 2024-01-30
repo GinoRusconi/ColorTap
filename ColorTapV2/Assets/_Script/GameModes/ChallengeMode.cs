@@ -61,7 +61,6 @@ public class ChallengeMode : MonoBehaviour , IGameMode
         else
         {
             //Player Lose
-            gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, false);
             StopAllCoroutines();
             StartCoroutine(Defeat());
         }
@@ -112,6 +111,7 @@ public class ChallengeMode : MonoBehaviour , IGameMode
 
     private IEnumerator Defeat()
     {
+        gameManagement._ButtonsManager.ActivateORDeactivateButtonsInteraction(PlayerID.Player1, false);
         yield return StartCoroutine(gameManagement._UiManagement.TextPlayer(PlayerID.Player1, "Defeat"));
             if(_life > 0)
             {
@@ -136,10 +136,11 @@ public class ChallengeMode : MonoBehaviour , IGameMode
             _timeLeft -= Time.deltaTime;
             yield return null;
         }
+        StartCoroutine(Defeat());
         _timeLeft = 0f;
         gameManagement._UiManagement.UpdateTimerUI(_timeLeft);
         timeCountOff = true;
-        gameManagement.NewLifeAds(true);
+        //gameManagement.NewLifeAds(true);
     }
 
     //Animation effect

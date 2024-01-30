@@ -12,7 +12,7 @@ public class VelocityMode : MonoBehaviour, IGameMode
 
     private int scoreP1;
     private int scoreP2;
-    private readonly int scoreWin = 2;
+    private const int scoreWin = 5;
     public void IGameMode(GameManagement gameManagement, MixColor mixColor)
     {
         this.gameManagement = gameManagement;
