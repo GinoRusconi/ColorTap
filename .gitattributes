@@ -126,3 +126,5 @@
 *.gz lfs
 *.rar lfs
 *.tar lfs
+*.aar lfs
+*.a lfs
